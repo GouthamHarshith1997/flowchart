@@ -1,0 +1,25 @@
+<!-- <div class="route" #canvasContent>
+    <span>{{data.name}}</span>
+</div> -->
+
+<div class="route" #canvasContent>
+
+    <div class="d-flex">
+      <div class="col-9">
+        <span class="name">{{ data.name }}</span>
+      </div>
+      <div class="col-3">
+        <div class="dropdown">
+          <button type="button" class="btn text-light float-end" data-bs-toggle="dropdown">
+            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" (click)="onEdit()">Edit</a></li>
+            <li><a class="dropdown-item" (click)="delete()">Delete</a></li>
+          </ul>
+        </div>
+      </div> 
+    </div>
+   
+  </div>
+  

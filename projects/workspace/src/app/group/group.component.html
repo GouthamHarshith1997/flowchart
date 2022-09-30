@@ -1,0 +1,14 @@
+<div
+    class="nested-flow-step"
+    #canvasContent
+>
+    <span>{{ data.name + '#' + data.groupCount}}</span>
+    <div
+        ngFlowchartCanvas
+        [ngFlowchartOptions]="options"
+        [ngFlowchartCallbacks]="callbacks"
+        class="nested-canvas-content"
+    >
+
+    </div>
+</div>
