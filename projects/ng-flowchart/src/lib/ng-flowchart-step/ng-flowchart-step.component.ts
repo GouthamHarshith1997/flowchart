@@ -351,7 +351,7 @@ export class NgFlowchartStepComponent<T = any> {
     let adjustedY = Math.max(pos[1] - (offsetCenter ? this.nativeElement.offsetHeight / 2 : 0), 0);
 
     this.nativeElement.style.left = `${adjustedX}px`;
-    this.nativeElement.style.top = `${adjustedY}px`;
+    this.nativeElement.style.top = `${adjustedY}px` ;
 
     this._currentPosition = [adjustedX, adjustedY];
   }

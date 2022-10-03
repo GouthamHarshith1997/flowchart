@@ -7,6 +7,8 @@ import { RouteStepComponent } from './custom-step/route-step/route-step.componen
 import { FormStepComponent, MyForm } from './form-step/form-step.component';
 import { NestedFlowComponent } from './nested-flow/nested-flow.component';
 import { GroupComponent } from './group/group.component';
+import { CanvasRendererService } from 'projects/ng-flowchart/src/lib/services/canvas-renderer.service';
+import { NgFlowchartCanvasService } from 'projects/ng-flowchart/src/lib/ng-flowchart-canvas.service';
 
 @Component({
   selector: 'app-root',
@@ -99,7 +101,9 @@ export class AppComponent {
   disabled = false;
 
 
-  constructor(private stepRegistry: NgFlowchartStepRegistry) {
+  constructor(private stepRegistry: NgFlowchartStepRegistry,
+    private renderer: CanvasRendererService,
+    private canvas1: NgFlowchartCanvasService,) {
 
     this.callbacks.onDropError = this.onDropError;
     this.callbacks.onMoveError = this.onMoveError;
@@ -118,6 +122,8 @@ export class AppComponent {
     this.stepRegistry.registerStep('nested-flow', NestedFlowComponent);
     this.stepRegistry.registerStep('form-step', FormStepComponent);
     this.stepRegistry.registerStep('route-step', RouteStepComponent);
+    const zoomElement:any = document.querySelector(".ngflowchart-step-wrapper");
+    zoomElement.style.transform = `rotate(270deg)`;
   }
 
   onDropError(error: NgFlowchart.DropError) {
@@ -177,5 +183,20 @@ export class AppComponent {
   onDelete(id) {
     console.log("inside on delete");
     this.canvas.getFlow().getStep(id).destroy(true);
+  }
+
+  rotateOrientation(degree){
+    var testFlow = this.canvas.getFlow();
+   var rotateDegree = degree+180;
+    const zoomElement:any = document.querySelector(".ngflowchart-step-wrapper");
+    zoomElement.style.transform = `rotate(${rotateDegree}deg)`;
+    // const groupflowCheck =  JSON.parse(localStorage.getItem("flowLocal"));
+    // // console.log(this.canvas.getFlow());
+    // console.log(groupflowCheck);
+    console.log(testFlow['canvas'].flow);
+    
+    // this.renderer.rotateFlow(testFlow['canvas'].flow,270);
+    // this.renderer.setScale(testFlow['canvas'].flow,10)
+    
   }
 }

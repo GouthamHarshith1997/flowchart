@@ -92,7 +92,9 @@ export namespace NgFlowchart {
       rescaleOnResize: true,
       defaultStep: 0.1,
     }
+orientation?: { 'HORIZONTAL'
 
+}
     // zoom?: {
     //   mode: 'WHEEL' | 'MANUAL' | 'DISABLED';
     //   defaultStep?: number;

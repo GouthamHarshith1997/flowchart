@@ -16,6 +16,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { GroupComponent } from './group/group.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { ToastrModule } from 'ngx-toastr';
+import { CanvasRendererService } from 'projects/ng-flowchart/src/lib/services/canvas-renderer.service';
+import { OptionsService } from 'projects/ng-flowchart/src';
+import { NgFlowchartCanvasService } from 'projects/ng-flowchart/src/lib/ng-flowchart-canvas.service';
+import { StepManagerService } from 'projects/ng-flowchart/src/lib/services/step-manager.service';
 
 
 @NgModule({
@@ -40,7 +44,7 @@ import { ToastrModule } from 'ngx-toastr';
     BrowserAnimationsModule,
     ToastrModule.forRoot(), // ToastrModule added
   ],
-  providers: [],
+  providers: [CanvasRendererService,OptionsService,NgFlowchartCanvasService,StepManagerService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

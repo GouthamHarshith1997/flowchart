@@ -18,6 +18,7 @@ export class CanvasRendererService {
 
     private scale: number = 1;
     private scaleDebounceTimer = null
+    setFlowLocally: any;
 
     constructor(
         private options: OptionsService, 
@@ -91,18 +92,18 @@ export class CanvasRendererService {
 
             let childExtent = childTreeWidths[child.nativeElement.id];
 
-            let childLeft = leftXTree + (childExtent / 2) - (child.nativeElement.offsetWidth / 2);
+            let childLeft = leftXTree + (childExtent / 2) + (child.nativeElement.offsetWidth / 2) +50;
 
 
-            child.zsetPosition([childLeft, childYTop]);
+            child.zsetPosition([childLeft, rootRect.top-canvasRect.top]); // left must be increase, top should be fixed.
 
             const currentChildRect = child.getCurrentRect(canvasRect);
 
             const childWidth = currentChildRect.width / this.scale
            
             child.zdrawArrow(
-                [rootXCenter, (rootRect.bottom - canvasRect.top * this.scale)],
-                [currentChildRect.left + childWidth / 2 - canvasRect.left, currentChildRect.top - canvasRect.top]
+                [rootRect.right- canvasRect.left, ((rootRect.bottom - canvasRect.top)/2 * this.scale)],// start
+                [currentChildRect.left - canvasRect.left, (currentChildRect.top - canvasRect.top)+currentChildRect.height/2]//end
             );
 
             this.renderChildTree(child, currentChildRect, canvasRect);
@@ -125,7 +126,7 @@ export class CanvasRendererService {
             return;
         }
 
-        if (this.options.callbacks?.beforeRender) {
+        if (this.options.callbacks?.beforeRender) { 
             this.options.callbacks.beforeRender()
         }
 
@@ -447,10 +448,12 @@ export class CanvasRendererService {
 
     public setScale(flow: CanvasFlow, scaleValue: number) {
         const minDimAdjust = `${1/scaleValue * 100}%`
-
+        //  console.log(JSON.stringify(flow));
+        localStorage.setItem('flowLocal',JSON.stringify(flow))
         const canvasContent = this.getCanvasContentElement()
 
         canvasContent.style.transform = `scale(${scaleValue})`;
+        // canvasContent.style.transform = `rotate(45deg)`;
         canvasContent.style.minHeight = minDimAdjust
         canvasContent.style.minWidth = minDimAdjust
         canvasContent.style.transformOrigin = 'top left'
@@ -468,6 +471,20 @@ export class CanvasRendererService {
             canvasContent.classList.remove('scaling')
         }, 300)
 
+    }
+
+    public rotateFlow(flow: CanvasFlow, rotateDegree: number){
+        // const minDimAdjust = `${1/scaleValue * 100}%`
+        const canvasContent = this.getCanvasContentElement()
+        canvasContent.style.transform = `rotate(${rotateDegree}deg)`;
+        // canvasContent.style.minHeight = minDimAdjust
+        // canvasContent.style.minWidth = minDimAdjust
+        // canvasContent.style.transformOrigin = 'top left'
+        // canvasContent.classList.add('scaling')
+
+        // this.scale = scaleValue
+        this.render(flow, true)
+        
     }
 
 
