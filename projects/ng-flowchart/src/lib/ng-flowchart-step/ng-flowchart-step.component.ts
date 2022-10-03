@@ -94,6 +94,7 @@ export class NgFlowchartStepComponent<T = any> {
   }
 
   canDrop(dropEvent: NgFlowchart.DropTarget, error: NgFlowchart.ErrorMessage): boolean {
+    console.log(dropEvent, error);
     return true;
   }
 

@@ -330,7 +330,7 @@ export class CanvasRendererService {
             return;
         }
 
-        console.log(bestMatch.step.type, dragStep);
+        // console.log(bestMatch.step.type, dragStep);
         let blockDrop : boolean = false;
         if(bestMatch.step.type == 'group-flow' && dragStep.type !== 'group-flow')
         {

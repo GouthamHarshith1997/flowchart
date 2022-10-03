@@ -9,6 +9,7 @@ import { NestedFlowComponent } from './nested-flow/nested-flow.component';
 import { GroupComponent } from './group/group.component';
 import { CanvasRendererService } from 'projects/ng-flowchart/src/lib/services/canvas-renderer.service';
 import { NgFlowchartCanvasService } from 'projects/ng-flowchart/src/lib/ng-flowchart-canvas.service';
+import { DropDataService } from 'projects/ng-flowchart/src/lib/services/dropdata.service';
 
 @Component({
   selector: 'app-root',
@@ -104,6 +105,7 @@ export class AppComponent {
   constructor(private stepRegistry: NgFlowchartStepRegistry,
     private renderer: CanvasRendererService,
     private canvas1: NgFlowchartCanvasService,) {
+  constructor(private stepRegistry: NgFlowchartStepRegistry, private dropService :  DropDataService) {
 
     this.callbacks.onDropError = this.onDropError;
     this.callbacks.onMoveError = this.onMoveError;
@@ -113,6 +115,7 @@ export class AppComponent {
     //new code
     let groupData  = { isGroupExist : false, groupCount :  0 }
     localStorage.setItem("groupData", JSON.stringify(groupData));
+
   }
 
   ngAfterViewInit() {
@@ -163,6 +166,7 @@ export class AppComponent {
     //new code
     let groupData  = { isGroupExist : false, groupCount :  0 }
     localStorage.setItem("groupData", JSON.stringify(groupData));
+    this.dropService.setGroupCount(0);
   }
 
   onGapChanged(event) {
@@ -194,9 +198,9 @@ export class AppComponent {
     // // console.log(this.canvas.getFlow());
     // console.log(groupflowCheck);
     console.log(testFlow['canvas'].flow);
-    
+
     // this.renderer.rotateFlow(testFlow['canvas'].flow,270);
     // this.renderer.setScale(testFlow['canvas'].flow,10)
-    
+
   }
 }

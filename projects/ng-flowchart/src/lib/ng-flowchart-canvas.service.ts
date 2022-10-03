@@ -1,4 +1,5 @@
 import { ComponentRef, Injectable, ViewContainerRef } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 import { NgFlowchart } from './model/flow.model';
 import { NgFlowchartStepComponent } from './ng-flowchart-step/ng-flowchart-step.component';
 import { CanvasRendererService } from './services/canvas-renderer.service';
@@ -54,6 +55,7 @@ export class NgFlowchartCanvasService {
     return this._disabled;
   }
 
+
   noParentError = {
     code: 'NO_PARENT',
     message: 'Step was not dropped under a parent and is not the root node',
@@ -63,8 +65,9 @@ export class NgFlowchartCanvasService {
     private drag: DragService,
     public options: OptionsService,
     private renderer: CanvasRendererService,
-    private stepmanager: StepManagerService
-  ) {}
+    private stepmanager: StepManagerService,
+    private toaster : ToastrService
+  ){ }
 
   public init(view: ViewContainerRef) {
     this.viewContainer = view;
@@ -120,8 +123,63 @@ export class NgFlowchartCanvasService {
     }
   }
 
-  public async onDrop(drag: DragEvent) {
-    console.log("event dropped : ", drag)
+  public onDrop(drag: DragEvent) {
+    console.log("event dropped : ", drag, this.flow.steps , this.flow.hasRoot())
+   
+    let currentDraggingElement = this.drag.getDragStep();
+    console.log(currentDraggingElement);
+    let groupCount =  this.drag.getGroupCount();
+    
+  
+    setTimeout(()=>
+    {
+      console.log("-----------------------------------",this.flow.steps , this.flow.steps.length);
+
+      if(this.flow.steps.length == 0 && currentDraggingElement.type == 'group-flow' && groupCount >= 1)
+      {
+        this.toaster.warning("Cannot drop a group inside a group");
+        return;
+      }
+      else if(this.flow.steps.length >= 1)
+      {
+          if(this.flow.steps[0].type == 'group-flow' && currentDraggingElement.type == 'group-flow' && groupCount == this.flow.steps.length )
+          {
+            this.drag.setGroupCount(++groupCount)
+            this.createStepAfterDropping(drag);
+          }
+          else if(currentDraggingElement.type == 'group-flow'){
+            this.toaster.warning("Cannot drop a group inside a group");
+          }
+          else{}
+      }
+
+      if( currentDraggingElement.type == 'group-flow' && groupCount == 0)
+      {
+      this.drag.setGroupCount(++groupCount)
+      this.createStepAfterDropping(drag);
+      }
+      else if(currentDraggingElement.type != 'group-flow')
+      {
+        this.createStepAfterDropping(drag);
+      }
+      
+    },0)
+
+  }
+
+  public onDragStart(drag: DragEvent) {
+    this.isDragging = true;
+
+    this.currentDropTarget = this.renderer.findAndShowClosestDrop(
+      this.drag.dragStep,
+      drag,
+      this.flow.steps
+    );
+  }
+
+ async createStepAfterDropping(drag: DragEvent)
+  {
+
     this.renderer.clearAllSnapIndicators(this.flow.steps);
 
     if (this.flow.hasRoot() && !this.currentDropTarget) {
@@ -142,6 +200,12 @@ export class NgFlowchartCanvasService {
         this.setRoot(componentRef.instance);
       } else {
         // if root is replaced by another step, rerender root to proper position
+        console.log("has parent");
+        // if(componentRef.instance.type == 'group-flow')
+        // {
+        //   this.toaster.warning("cannot have a group inside a group");
+        //     return;
+        // }
         if (
           dropTarget.step.isRootElement() &&
           dropTarget.position === 'ABOVE'
@@ -163,16 +227,6 @@ export class NgFlowchartCanvasService {
       this.viewContainer.remove(i);
       this.dropError(error);
     }
-  }
-
-  public onDragStart(drag: DragEvent) {
-    this.isDragging = true;
-
-    this.currentDropTarget = this.renderer.findAndShowClosestDrop(
-      this.drag.dragStep,
-      drag,
-      this.flow.steps
-    );
   }
 
   public createStepFromType(
@@ -248,6 +302,7 @@ export class NgFlowchartCanvasService {
   }
 
   addToCanvas(componentRef: ComponentRef<NgFlowchartStepComponent>) {
+    console.log("inside canvas", componentRef);
     this.renderer.renderNonRoot(componentRef);
   }
 
@@ -311,6 +366,7 @@ export class NgFlowchartCanvasService {
     dropTarget: NgFlowchart.DropTarget,
     isMove = false
   ): DropResponse {
+    console.log("addStepToFlow : ",step, dropTarget, isMove);
     let response = {
       added: false,
       prettyRender: false,

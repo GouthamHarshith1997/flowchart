@@ -3,8 +3,10 @@ import { NgFlowchart } from './model/flow.model';
 import { CONSTANTS } from './model/flowchart.constants';
 import { NgFlowchartCanvasService } from './ng-flowchart-canvas.service';
 import { CanvasRendererService } from './services/canvas-renderer.service';
+import { ToastrService } from 'ngx-toastr';
 import { OptionsService } from './services/options.service';
 import { StepManagerService } from './services/step-manager.service';
+import { DropDataService as DragService } from './services/dropdata.service';
 
 
 
@@ -21,7 +23,7 @@ export class NgFlowchartCanvasDirective implements OnInit, OnDestroy, AfterViewI
 
     @HostListener('drop', ['$event'])
     protected onDrop(event: DragEvent) {
-        console.log("on drop event : ", event);
+      
         if (this._disabled) { return; }
 
         // its possible multiple canvases exist so make sure we only move/drop on the closest one
@@ -31,8 +33,17 @@ export class NgFlowchartCanvasDirective implements OnInit, OnDestroy, AfterViewI
         }
 
         const type = event.dataTransfer.getData('type');
+        console.log("on drop event : ", event, type);
+        let currentDraggingElement = this.drag.getDragStep();
         if ('FROM_CANVAS' == type) {
-            this.canvas.moveStep(event, event.dataTransfer.getData('id'));
+            if(currentDraggingElement.type == 'group-flow')
+            {
+                this.toaster.warning("you cannot change the position of the group");
+            }
+            else{
+                this.canvas.moveStep(event, event.dataTransfer.getData('id'));
+            }
+          
         }
         else {
             this.canvas.onDrop(event);
@@ -43,6 +54,7 @@ export class NgFlowchartCanvasDirective implements OnInit, OnDestroy, AfterViewI
     @HostListener('dragover', ['$event'])
     protected onDragOver(event: DragEvent) {
         event.preventDefault();
+    //   console.log("over..", this._disabled)
         if (this._disabled) { return; }
         this.canvas.onDragStart(event);
     }
@@ -107,7 +119,9 @@ export class NgFlowchartCanvasDirective implements OnInit, OnDestroy, AfterViewI
         protected canvasEle: ElementRef<HTMLElement>,
         private viewContainer: ViewContainerRef,
         private canvas: NgFlowchartCanvasService,
-        private optionService: OptionsService
+        private optionService: OptionsService,
+        private drag : DragService,
+        private toaster : ToastrService
     ) {
 
         this.canvasEle.nativeElement.classList.add(CONSTANTS.CANVAS_CLASS);
