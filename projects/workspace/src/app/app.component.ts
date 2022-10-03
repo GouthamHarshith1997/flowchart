@@ -7,6 +7,7 @@ import { RouteStepComponent } from './custom-step/route-step/route-step.componen
 import { FormStepComponent, MyForm } from './form-step/form-step.component';
 import { NestedFlowComponent } from './nested-flow/nested-flow.component';
 import { GroupComponent } from './group/group.component';
+import { DropDataService } from 'projects/ng-flowchart/src/lib/services/dropdata.service';
 
 @Component({
   selector: 'app-root',
@@ -99,7 +100,7 @@ export class AppComponent {
   disabled = false;
 
 
-  constructor(private stepRegistry: NgFlowchartStepRegistry) {
+  constructor(private stepRegistry: NgFlowchartStepRegistry, private dropService :  DropDataService) {
 
     this.callbacks.onDropError = this.onDropError;
     this.callbacks.onMoveError = this.onMoveError;
@@ -109,6 +110,7 @@ export class AppComponent {
     //new code
     let groupData  = { isGroupExist : false, groupCount :  0 }
     localStorage.setItem("groupData", JSON.stringify(groupData));
+
   }
 
   ngAfterViewInit() {
@@ -157,6 +159,7 @@ export class AppComponent {
     //new code
     let groupData  = { isGroupExist : false, groupCount :  0 }
     localStorage.setItem("groupData", JSON.stringify(groupData));
+    this.dropService.setGroupCount(0);
   }
 
   onGapChanged(event) {

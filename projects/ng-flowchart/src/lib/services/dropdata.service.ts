@@ -7,6 +7,7 @@ import { NgFlowchart } from '../model/flow.model';
 })
 export class DropDataService {
   dragStep: NgFlowchart.PendingStep | NgFlowchart.MoveStep;
+  groupCount : number = 0;
 
   public GroupCheck = new Subject<any>();
 
@@ -18,6 +19,16 @@ export class DropDataService {
 
   public getDragStep() {
     return this.dragStep;
+  }
+
+  public setGroupCount(count : number)
+  {
+      this.groupCount =  count;
+  }
+
+  public getGroupCount()
+  {
+    return this.groupCount;
   }
 
   sendGroupData(projectData) {

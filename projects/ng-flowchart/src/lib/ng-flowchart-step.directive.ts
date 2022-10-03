@@ -19,7 +19,7 @@ export class NgFlowchartStepDirective implements AfterViewInit, OnDestroy {
             {
                 if(this.flowStep.data.name.includes("Group"))
                 {
-                    console.log("inside if : ", this.flowStep);
+                    console.log("drag start, inside if : ", this.flowStep);
                     this.flowStep.data.groupCount = this.flowStep.data.groupCount + 1;
                 }
                 this.data.setDragStep(this.flowStep);
@@ -29,7 +29,7 @@ export class NgFlowchartStepDirective implements AfterViewInit, OnDestroy {
             {
                 if(this.flowStep.data.name === 'Group')
                 {
-                    console.log("inside else : ", this.flowStep)
+                    console.log("drag start, inside else : ", this.flowStep)
                     let groupData  = { isGroupExist : true, groupCount :  1 };
                     localStorage.setItem("groupData", JSON.stringify(groupData));
                     this.data.setDragStep(this.flowStep);
@@ -45,6 +45,7 @@ export class NgFlowchartStepDirective implements AfterViewInit, OnDestroy {
 
     @HostListener('dragend', ['$event'])
     onDragEnd(event: DragEvent) {
+        console.log("drag end");
        this.data.setDragStep(null);
     }
 
