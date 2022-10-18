@@ -1,5 +1,5 @@
 .nested-flow-step {
-    background: #f8f8f8;
+    background: #e5e4e4;
     color: #444;
     display: flex;
     flex-direction: column;
@@ -18,6 +18,6 @@
     flex: 1 0 100%;
     display: flex;
     background-size: 30px 30px;
-    background-image: linear-gradient(to right, #d9d9d9 1px, transparent 1px),
-        linear-gradient(to bottom, #d9d9d9 1px, transparent 1px);
+    // background-image: linear-gradient(to right, #d9d9d9 1px, transparent 1px),
+    //     linear-gradient(to bottom, #d9d9d9 1px, transparent 1px);
 }

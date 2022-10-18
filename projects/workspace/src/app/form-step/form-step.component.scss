@@ -1,0 +1,18 @@
+.content {
+    background: #444;
+    color: white;
+    height: 125px;
+    width: 200px;
+    border-radius: 4px;
+    padding: 1em;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.name
+{
+    text-align: center;
+}

@@ -16,10 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { GroupComponent } from './group/group.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { ToastrModule } from 'ngx-toastr';
-import { CanvasRendererService } from 'projects/ng-flowchart/src/lib/services/canvas-renderer.service';
-import { OptionsService } from 'projects/ng-flowchart/src';
-import { NgFlowchartCanvasService } from 'projects/ng-flowchart/src/lib/ng-flowchart-canvas.service';
-import { StepManagerService } from 'projects/ng-flowchart/src/lib/services/step-manager.service';
+import { FreeDraggingDirective } from './free-dragging.direcetive';
 
 
 @NgModule({
@@ -29,7 +26,7 @@ import { StepManagerService } from 'projects/ng-flowchart/src/lib/services/step-
     RouteStepComponent,
     NestedFlowComponent,
     FormStepComponent,
-    GroupComponent
+    GroupComponent,FreeDraggingDirective
   ],
   imports: [
     BrowserModule,
@@ -44,7 +41,11 @@ import { StepManagerService } from 'projects/ng-flowchart/src/lib/services/step-
     BrowserAnimationsModule,
     ToastrModule.forRoot(), // ToastrModule added
   ],
-  providers: [CanvasRendererService,OptionsService,NgFlowchartCanvasService,StepManagerService],
+  exports: [
+    FormsModule,
+    FreeDraggingDirective,
+    ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

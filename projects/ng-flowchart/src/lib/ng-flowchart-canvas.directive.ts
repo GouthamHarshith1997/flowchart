@@ -23,8 +23,11 @@ export class NgFlowchartCanvasDirective implements OnInit, OnDestroy, AfterViewI
 
     @HostListener('drop', ['$event'])
     protected onDrop(event: DragEvent) {
-      
-        if (this._disabled) { return; }
+        console.log(event);
+        if (this._disabled) {
+            console.log("inside if")
+             return; 
+        }
 
         // its possible multiple canvases exist so make sure we only move/drop on the closest one
         const closestCanvasId = (event.target as HTMLElement).closest('.ngflowchart-canvas-content')?.id
@@ -33,16 +36,17 @@ export class NgFlowchartCanvasDirective implements OnInit, OnDestroy, AfterViewI
         }
 
         const type = event.dataTransfer.getData('type');
-        console.log("on drop event : ", event, type);
+        
         let currentDraggingElement = this.drag.getDragStep();
         if ('FROM_CANVAS' == type) {
-            if(currentDraggingElement.type == 'group-flow')
-            {
-                this.toaster.warning("you cannot change the position of the group");
-            }
-            else{
+            // if(currentDraggingElement.type == 'group-flow')
+            // {
+            //     this.toaster.warning("you cannot change the position of the group");
+            // }
+            // else{
+                console.log("current dragging step", currentDraggingElement);
                 this.canvas.moveStep(event, event.dataTransfer.getData('id'));
-            }
+            // }
           
         }
         else {
@@ -202,28 +206,37 @@ export class NgFlowchartCanvasDirective implements OnInit, OnDestroy, AfterViewI
     };
 
     private adjustScale(event) {
+console.log(event);
 
         if (this.canvas.flow.hasRoot()) {
             event.preventDefault();
             // scale down / zoom out
-
-            if(event.deltaY > 0) {
-                this._scaleVal -= this._scaleVal * .1
-            }
+console.log(this._scaleVal);
+let zoom = 1;
+      const ZOOM_SPEED = 0.1;
+            // if(event.deltaY > 0) {
+            //     this._scaleVal -= this._scaleVal * .1
+            // }
             // scale up / zoom in
-            else if(event.deltaY < 0) {
-                this._scaleVal += this._scaleVal * .1
-            }
+            //  if(event.deltaY < 0) {
+            //     this._scaleVal += this._scaleVal * .1
+            // }
             const minDimAdjust = `${1/this._scaleVal * 100}%`
-
+            if(event.deltaY > 0)
+            {
+                this.canvasContent.style.transform = `scale(${(this._scaleVal += ZOOM_SPEED)})`;
+            }
+            else{
+                this.canvasContent.style.transform = `scale(${(this._scaleVal -= ZOOM_SPEED)})`;
+            }
             this.canvasContent.style.transform = `scale(${this._scaleVal})`;
             this.canvasContent.style.minHeight = minDimAdjust
             this.canvasContent.style.minWidth = minDimAdjust
             this.canvasContent.style.transformOrigin = 'top left'
             this.canvasContent.classList.add('scaling')
 
-            this.canvas.setScale(this._scaleVal)
-            this.canvas.reRender(true)
+            // this.canvas.setScale(this._scaleVal)
+            // this.canvas.reRender(true)
 
             this.scaleDebounceTimer && clearTimeout(this.scaleDebounceTimer)
             this.scaleDebounceTimer = setTimeout(() => {

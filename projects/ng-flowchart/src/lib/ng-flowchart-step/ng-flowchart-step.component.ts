@@ -26,6 +26,7 @@ export class NgFlowchartStepComponent<T = any> {
 
   @HostListener('dragstart', ['$event'])
   onMoveStart(event: DragEvent) {
+    console.log(event)
     if (this.canvas.disabled) { return; }
     this.hideTree();
     event.dataTransfer.setData('type', 'FROM_CANVAS');
@@ -291,6 +292,22 @@ export class NgFlowchartStepComponent<T = any> {
     return Math.max(currentNodeWidth, childWidth);
   }
 
+  getNodeTreeLength(stepGap: number) {
+    const currentNodeWidth = this.nativeElement.getBoundingClientRect().height;
+
+    if (!this.hasChildren()) {
+      return this.nativeElement.getBoundingClientRect().height;
+    }
+
+    let childLenth = this._children.reduce((childTreelength, child) => {
+      return childTreelength += child.getNodeTreeLength(stepGap);
+    }, 0)
+
+    childLenth += stepGap * (this._children.length - 1);
+
+    return Math.max(currentNodeWidth, childLenth);
+  }
+
   /**
    * Is this step currently hidden and unavailable as a drop location
    */
@@ -352,7 +369,7 @@ export class NgFlowchartStepComponent<T = any> {
     let adjustedY = Math.max(pos[1] - (offsetCenter ? this.nativeElement.offsetHeight / 2 : 0), 0);
 
     this.nativeElement.style.left = `${adjustedX}px`;
-    this.nativeElement.style.top = `${adjustedY}px` ;
+    this.nativeElement.style.top = `${adjustedY}px`;
 
     this._currentPosition = [adjustedX, adjustedY];
   }

@@ -1,39 +1,22 @@
-<main>
-  <div
-    id="canvas"
-    ngFlowchartCanvas
-    [ngFlowchartOptions]="options"
-    [ngFlowchartCallbacks]="callbacks"
-    [disabled]="disabled"    
-  ></div>
+<main >
+  <div id="canvas" ngFlowchartCanvas  [ngFlowchartOptions]="options" [ngFlowchartCallbacks]="callbacks"
+    [disabled]="disabled"></div>
   <div id="palette">
+    <div class="palette-heading">
+      <h4>Pallete</h4><span style="flex-grow: 1;"></span>
+    </div>
     <section>
-      <div
-        class="plugin-op"
-        *ngFor="let item of items"
-        [ngFlowchartStep]="{
-          template: normalStep,
-          type: item.type,
-          data: item.data
-        }"
-      >
-        <span>{{ item.name }}</span>
-      </div>
-      <div
-        class="plugin-op"
-        *ngFor="let op of customOps"
-        [ngFlowchartStep]="op.step"
-      >
+      <div class="plugin-op" *ngFor="let op of customOps" [ngFlowchartStep]="op.step">
+       <i [class]="'mx-2' + op.step.data.class" ></i>
         <span>{{ op.paletteName }}</span>
       </div>
     </section>
 
-    <section>
+    <!-- <section>
       <button (click)="showFlowData()">Show JSON</button>
       <button (click)="showUpload()">Upload JSON</button>
-      <button (click)="rotateOrientation(90)">Horizontal</button>
-    </section>
-    <section>
+    </section> -->
+    <!-- <section>
       <div class="sub-section">
         <label for="step-gap-select" class="wide">Step Gap</label>
         <select
@@ -63,11 +46,13 @@
           (change)="disabled = $event.target.checked"
         />
       </div>
+    </section> -->
+    <section class="position-fixed bottom-0">
+      <button (click)="showFlowData()" class="btn btn-primary mx-1">Show JSON</button>
+      <button (click)="clearData()" class="btn btn-primary mx-1">Clear Flow</button>
+      <button (click)="rerenderFlowchart()" class="btn btn-primary mx-1 mt-4">Reset</button>
     </section>
-    <section>
-      <button (click)="clearData()">Clear Flow</button>
-    </section>
-    <ng-template #normalStep let-data>
+    <!-- <ng-template #normalStep let-data>
       <div
         class="card"
         [attr.name]="data.data.name"
@@ -76,6 +61,6 @@
       >
         <span>{{ data.data.name }}</span>
       </div>
-    </ng-template>
+    </ng-template> -->
   </div>
 </main>

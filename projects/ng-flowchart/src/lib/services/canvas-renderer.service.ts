@@ -4,7 +4,6 @@ import { CONSTANTS } from '../model/flowchart.constants';
 import { CanvasFlow } from '../ng-flowchart-canvas.service';
 import { NgFlowchartStepComponent } from '../ng-flowchart-step/ng-flowchart-step.component';
 import { OptionsService } from './options.service';
-import { ToastrService } from 'ngx-toastr';
 
 export type DropProximity = {
     step: NgFlowchartStepComponent,
@@ -18,15 +17,12 @@ export class CanvasRendererService {
 
     private scale: number = 1;
     private scaleDebounceTimer = null
-    setFlowLocally: any;
 
     constructor(
-        private options: OptionsService, 
-        private toastr: ToastrService
+        private options: OptionsService
     ) {
 
     }
-    
 
     public init(viewContainer: ViewContainerRef) {
         this.viewContainer = viewContainer;
@@ -61,53 +57,88 @@ export class CanvasRendererService {
 
         //top of the child row is simply the relative bottom of the root + stepGap
         const childYTop = (rootRect.bottom - canvasRect.top * this.scale) + this.getStepGap();
-  
+        //right of the child is relative lrft of the bottom.
+        const childXleft = (rootRect.right-canvasRect.left*this.scale)+this.getStepGap();
         const rootWidth = rootRect.width / this.scale
-
+        const rootHeight = rootRect.height/this.scale;
         const rootXCenter = (rootRect.left - canvasRect.left) + (rootWidth / 2);
 
-
+        const rootYcenter = (rootRect.top-canvasRect.top) + (rootHeight/2);
         //get the width of the child trees
         let childTreeWidths = {};
         let totalTreeWidth = 0;
+        var topPosition = 0;
+        let totalTreeheight=0;
 
         rootNode.children.forEach(child => {
-            let totalChildWidth = child.getNodeTreeWidth(this.getStepGap());
+            let totalChildWidth = child.getNodeTreeLength(this.getStepGap());
             totalChildWidth = totalChildWidth / this.scale
             childTreeWidths[child.nativeElement.id] = totalChildWidth;
 
             totalTreeWidth += totalChildWidth;
+
+            // topPosition += 50;
         });
 
         //add length for stepGaps between child trees
         totalTreeWidth += (rootNode.children.length - 1) * this.getStepGap();
-
+        totalTreeheight += (rootNode.children.length - 1) * this.getStepGap();
         //if we have more than 1 child, we want half the extent on the left and half on the right
-        let leftXTree = rootXCenter - (totalTreeWidth / 2);
-        
+        let leftXTree = rootXCenter - (totalTreeWidth /2);
+        let leftYtree = rootYcenter - (totalTreeWidth /2);
         // dont allow it to go negative since you cant scroll that way
+
+        
         leftXTree = Math.max(0, leftXTree)
-
+        leftYtree = Math.max(0,leftYtree)
         rootNode.children.forEach(child => {
-
+          if(child.type!='group-flow'){
             let childExtent = childTreeWidths[child.nativeElement.id];
 
-            let childLeft = leftXTree + (childExtent / 2) + (child.nativeElement.offsetWidth / 2) +50;
+            // let childLeft = leftXTree + (childExtent / 2) - (child.nativeElement.offsetHeight / 2)+ this.getStepGap();
+           let childTop = leftYtree + (childExtent / 5) - (child.nativeElement.offsetHeight/2) + this.getStepGap();
+
+            // child.zsetPosition([childXleft,(rootRect.top-canvasRect.top)]);
+
+          
+                child.zsetPosition([childXleft,childTop]);   
+           
+
+            const currentChildRect = child.getCurrentRect(canvasRect);
+
+            const childWidth = currentChildRect.width / this.scale
+
+            const childHeight = currentChildRect.height/this.scale
+           
+            child.zdrawArrow(
+                    [(rootRect.right - canvasRect.left * this.scale), rootYcenter],
+                    [currentChildRect.left- canvasRect.left, ((currentChildRect.top - canvasRect.top)+childHeight/2)]
+                );
+
+            this.renderChildTree(child, currentChildRect, canvasRect);
+            // leftXTree += childExtent + this.getStepGap();
+            leftYtree += childExtent + this.getStepGap();
+          }
+          else if(child.type=='group-flow'){
+            let childExtent = childTreeWidths[child.nativeElement.id];
+
+            let childLeft = leftXTree + (childExtent / 2) - (child.nativeElement.offsetWidth / 2);
 
 
-            child.zsetPosition([childLeft, rootRect.top-canvasRect.top]); // left must be increase, top should be fixed.
+            child.zsetPosition([childLeft, childYTop]); // top must be increase, left should be fixed.
 
             const currentChildRect = child.getCurrentRect(canvasRect);
 
             const childWidth = currentChildRect.width / this.scale
            
             child.zdrawArrow(
-                [rootRect.right- canvasRect.left, ((rootRect.bottom - canvasRect.top)/2 * this.scale)],// start
-                [currentChildRect.left - canvasRect.left, (currentChildRect.top - canvasRect.top)+currentChildRect.height/2]//end
+                [rootXCenter, (rootRect.bottom - canvasRect.top * this.scale)],
+                [currentChildRect.left + childWidth / 2 - canvasRect.left, currentChildRect.top - canvasRect.top]
             );
 
             this.renderChildTree(child, currentChildRect, canvasRect);
-            leftXTree += childExtent + this.getStepGap();
+            leftXTree += childExtent + this.getStepGap();  
+        }
         })
 
     }
@@ -126,7 +157,7 @@ export class CanvasRendererService {
             return;
         }
 
-        if (this.options.callbacks?.beforeRender) { 
+        if (this.options.callbacks?.beforeRender) {
             this.options.callbacks.beforeRender()
         }
 
@@ -185,7 +216,7 @@ export class CanvasRendererService {
                 result = 'deadzone';
             }
 
-            if (absYDistance > absXDistance) {
+            if (absYDistance < absXDistance) {
                 result = {
                     step: targetStep,
                     position: yDiff > 0 ? 'BELOW' : 'ABOVE',
@@ -282,6 +313,18 @@ export class CanvasRendererService {
         return Math.max(totalTreeWidth, rootWidth);
     }
 
+    private getTotalTreeLength(flow: CanvasFlow): number {
+        let totalTreeLength = 0;
+        const rootWidth = flow.rootStep.getCurrentRect().height / this.scale;
+        flow.rootStep.children.forEach(child => {
+            let totalChildWidth = child.getNodeTreeWidth(this.getStepGap());
+            totalTreeLength += totalChildWidth / this.scale;
+        });
+        totalTreeLength += (flow.rootStep.children.length - 1) * this.getStepGap();
+        // total tree width doesn't give root width
+        return Math.max(totalTreeLength, rootWidth);
+    }
+
     private findBestMatchForSteps(dragStep: NgFlowchart.Step, event: DragEvent, steps: ReadonlyArray<NgFlowchartStepComponent>): DropProximity | null {
         const absXY = [event.clientX, event.clientY];
 
@@ -315,7 +358,7 @@ export class CanvasRendererService {
         if (!steps || steps.length == 0) {
             return;
         }
-    
+
         let bestMatch: DropProximity = this.findBestMatchForSteps(dragStep, event, steps);
 
         // TODO make this more efficient. two loops
@@ -329,19 +372,6 @@ export class CanvasRendererService {
         if (!bestMatch) {
             return;
         }
-
-        // console.log(bestMatch.step.type, dragStep);
-        let blockDrop : boolean = false;
-        if(bestMatch.step.type == 'group-flow' && dragStep.type !== 'group-flow')
-        {
-            blockDrop = true;
-        }
-
-        if(blockDrop)
-        {
-            return;
-        }
-      
 
         bestMatch.step.showHoverIcon(bestMatch.position);
 
@@ -448,12 +478,10 @@ export class CanvasRendererService {
 
     public setScale(flow: CanvasFlow, scaleValue: number) {
         const minDimAdjust = `${1/scaleValue * 100}%`
-        //  console.log(JSON.stringify(flow));
-        localStorage.setItem('flowLocal',JSON.stringify(flow))
+
         const canvasContent = this.getCanvasContentElement()
 
         canvasContent.style.transform = `scale(${scaleValue})`;
-        // canvasContent.style.transform = `rotate(45deg)`;
         canvasContent.style.minHeight = minDimAdjust
         canvasContent.style.minWidth = minDimAdjust
         canvasContent.style.transformOrigin = 'top left'
@@ -471,20 +499,6 @@ export class CanvasRendererService {
             canvasContent.classList.remove('scaling')
         }, 300)
 
-    }
-
-    public rotateFlow(flow: CanvasFlow, rotateDegree: number){
-        // const minDimAdjust = `${1/scaleValue * 100}%`
-        const canvasContent = this.getCanvasContentElement()
-        canvasContent.style.transform = `rotate(${rotateDegree}deg)`;
-        // canvasContent.style.minHeight = minDimAdjust
-        // canvasContent.style.minWidth = minDimAdjust
-        // canvasContent.style.transformOrigin = 'top left'
-        // canvasContent.classList.add('scaling')
-
-        // this.scale = scaleValue
-        this.render(flow, true)
-        
     }
 
 

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NgFlowchartStepComponent } from 'projects/ng-flowchart/src/lib/ng-flowchart-step/ng-flowchart-step.component';
 import { NgFlowchart } from 'projects/ng-flowchart/src';
 import { RouteStepComponent } from './route-step/route-step.component';
+import { DropDataService } from 'projects/ng-flowchart/src/lib/services/dropdata.service';
 
 @Component({
   selector: 'app-custom-step',
@@ -13,6 +14,11 @@ export class CustomStepComponent extends NgFlowchartStepComponent {
   routes = [];
   name: string = '';
 
+  constructor(private  dataService : DropDataService ) { 
+    super()
+  }
+
+  
   ngOnInit(): void {
   }
 
@@ -60,6 +66,22 @@ export class CustomStepComponent extends NgFlowchartStepComponent {
   {
     console.log("inside edit", this.data);
     this.data.name =  this.name;
+  }
+
+  
+  onDragStart(event)
+  {
+    console.log("drag started", event);
+    console.log(this);
+    console.log(this.data)
+    let obj = {
+      id : this.id,
+      data :  this.data,
+      drag :  event,
+      instance:  this
+    }
+    console.log(obj);
+    this.dataService.setActiveStep(obj);
   }
 
 }

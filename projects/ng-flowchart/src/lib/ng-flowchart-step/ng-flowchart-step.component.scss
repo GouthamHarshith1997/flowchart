@@ -50,30 +50,34 @@
 
 .ngflowchart-step-wrapper[ngflowchart-drop-hover="above"]::before,
 .ngflowchart-step-wrapper[ngflowchart-drop-hover="above"]::after {
-    top: 0;
-    right: 50%;
-    transform: translate(50%, -50%);
+  left: 0;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .ngflowchart-step-wrapper[ngflowchart-drop-hover="below"]::before,
 .ngflowchart-step-wrapper[ngflowchart-drop-hover="below"]::after {
+  right: 0;
+    top: 50%;
+    transform: translate(50%, -50%);
+   
+}
+
+.ngflowchart-step-wrapper[ngflowchart-drop-hover="right"]::before,
+.ngflowchart-step-wrapper[ngflowchart-drop-hover="right"]::after {
+    
     bottom: 0;
     right: 50%;
     transform: translate(50%, 50%);
 }
 
-.ngflowchart-step-wrapper[ngflowchart-drop-hover="right"]::before,
-.ngflowchart-step-wrapper[ngflowchart-drop-hover="right"]::after {
-    right: 0;
-    top: 50%;
-    transform: translate(50%, -50%);
-}
-
 .ngflowchart-step-wrapper[ngflowchart-drop-hover="left"]::before,
 .ngflowchart-step-wrapper[ngflowchart-drop-hover="left"]::after {
-    left: 0;
-    top: 50%;
-    transform: translate(-50%, -50%);
+  
+
+    top: 0;
+    right: 50%;
+    transform: translate(50%, -50%);
 }
 
 @keyframes wiggle {

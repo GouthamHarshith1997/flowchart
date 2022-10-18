@@ -1,5 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 import { NgFlowchart, NgFlowchartCanvasDirective, NgFlowchartStepComponent } from 'projects/ng-flowchart/src';
+import { DropDataService } from 'projects/ng-flowchart/src/lib/services/dropdata.service';
 
 export type NestedData = {
   nested: any
@@ -32,8 +34,9 @@ export class NestedFlowComponent extends NgFlowchartStepComponent implements OnI
     }
   }
 
-
-  constructor() {
+  name: string;
+  constructor(private dataService: DropDataService,
+    private toastr: ToastrService) {
     super();
   }
 
@@ -51,9 +54,9 @@ export class NestedFlowComponent extends NgFlowchartStepComponent implements OnI
   }
 
   // add nested-alt class to alternate nested flows for better visibility
-  addAlternateClass(): void {  
+  addAlternateClass(): void {
     const parentCanvasWrapperClasses = (this.canvas.viewContainer.element.nativeElement as HTMLElement).parentElement.classList;
-    if(parentCanvasWrapperClasses.contains('nested-flow-step') && !parentCanvasWrapperClasses.contains('nested-alt')){
+    if (parentCanvasWrapperClasses.contains('nested-flow-step') && !parentCanvasWrapperClasses.contains('nested-alt')) {
       this.nativeElement.classList.add('nested-alt');
     }
   }
@@ -75,17 +78,37 @@ export class NestedFlowComponent extends NgFlowchartStepComponent implements OnI
   }
 
   canDrop(dropEvent: NgFlowchart.DropTarget): boolean {
-    return true;
+
+    if (dropEvent == null) {
+
+      return true;
+
+    }
+
+    else if (dropEvent.step.type === 'group-flow') {
+
+      this.toastr.warning("Cannot drop steps outside the group");
+
+      return false;
+
+    }
+
+    else {
+
+      return true;
+
+    }
+
   }
 
   canDeleteStep(): boolean {
     return true;
   }
 
-  
 
-  async onUpload(data: NestedData) { 
-    if(!this.nestedCanvas) {
+
+  async onUpload(data: NestedData) {
+    if (!this.nestedCanvas) {
       return
     }
     await this.nestedCanvas.getFlow().upload(data.nested);
@@ -99,4 +122,31 @@ export class NestedFlowComponent extends NgFlowchartStepComponent implements OnI
     return num >= start && num <= end
   }
 
+  onDragStart(event) {
+    let dragCheck = this.dataService.getActiveStepDroppingFlag();
+
+    if (dragCheck) {
+
+      return;
+
+    }
+    console.log(this.data);
+
+    let obj = {
+      id: this.id,
+      data: this.data,
+      drag: event,
+      instance: this
+    }
+    console.log(obj);
+    this.dataService.setActiveStep(obj);
+  }
+
+  delete() {
+    this.destroy(false);
+  }
+
+  onEdit() {
+    this.data.name = this.name;
+  }
 }

@@ -8,11 +8,29 @@ import { NgFlowchart } from '../model/flow.model';
 export class DropDataService {
   dragStep: NgFlowchart.PendingStep | NgFlowchart.MoveStep;
   groupCount : number = 0;
+  activeStep;
 
   public GroupCheck = new Subject<any>();
-
+  isActiveStepDropping : boolean = false;
   constructor() {}
 
+  public setActiveStepDroppingFlag(value : boolean)
+
+ {
+
+    this.isActiveStepDropping = value;
+
+ }
+
+
+
+ public getActiveStepDroppingFlag()
+
+ {
+
+  return this.isActiveStepDropping;
+
+ }
   public setDragStep(ref: NgFlowchart.PendingStep) {
     this.dragStep = ref;
   }
@@ -20,7 +38,7 @@ export class DropDataService {
   public getDragStep() {
     return this.dragStep;
   }
-
+  
   public setGroupCount(count : number)
   {
       this.groupCount =  count;
@@ -38,4 +56,16 @@ export class DropDataService {
   getGroupCheck(): Observable<any> {
     return this.GroupCheck.asObservable();
   }
+
+ public setActiveStep(step)
+ {
+    this.activeStep = step;
+ }
+
+ public getActiveStep()
+ {
+  return this.activeStep;
+ }
+
+ 
 }

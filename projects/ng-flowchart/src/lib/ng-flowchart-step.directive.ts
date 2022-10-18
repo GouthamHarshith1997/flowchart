@@ -13,15 +13,16 @@ export class NgFlowchartStepDirective implements AfterViewInit, OnDestroy {
     
     @HostListener('dragstart', ['$event'])
     onDragStart(event: DragEvent) {
+            console.log("drag started ",event, this.flowStep);
             let booleanCheck = { "true": true, "false":  false, null : null}
             let groupCheck =  JSON.parse(localStorage.getItem("groupData"));
             if(booleanCheck[groupCheck['isGroupExist']])
             {
-                if(this.flowStep.data.name.includes("Group"))
-                {
-                    console.log("drag start, inside if : ", this.flowStep);
-                    this.flowStep.data.groupCount = this.flowStep.data.groupCount + 1;
-                }
+                // if(this.flowStep.data.name.includes("Group"))
+                // {
+                //     console.log("drag start, inside if : ", this.flowStep);
+                //     this.flowStep.data.groupCount = this.flowStep.data.groupCount + 1;
+                // }
                 this.data.setDragStep(this.flowStep);
                 event.dataTransfer.setData('type', 'FROM_PALETTE');
             }
@@ -67,5 +68,11 @@ export class NgFlowchartStepDirective implements AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
+        // this.flowStep.data['info'] = 
+        // {
+        //     type  : this.flowStep.data,
+        //     template : this.flowStep.template
+        // }
+        console.log("62", this.flowStep);
     }
 }

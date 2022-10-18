@@ -1,8 +1,25 @@
 <div
     class="nested-flow-step"
-    #canvasContent
+    #canvasContent (dragstart)="onDragStart($event)"
 >
-    <span>{{ data.name }}</span>
+    <div class="d-flex">
+        <div class="col-10">
+            <span>{{ data.name}}</span>
+        </div>
+        <div class="col-2">
+            <div class="dropdown">
+                <button type="button" class="btn text-dark float-end" data-bs-toggle="dropdown">
+                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                </button>
+                <ul class="dropdown-menu">
+                    <!-- <li><a class="dropdown-item" (click)="onAddRoute()">Add</a></li> -->
+                    <li><a class="dropdown-item"  data-bs-toggle="modal" [attr.data-bs-target]="'#exampleModal' + id" (click)="name = data.name">Edit</a></li>
+                    <li><a class="dropdown-item" (click)="delete()">Delete</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <div
         ngFlowchartCanvas
         [ngFlowchartOptions]="options"
@@ -10,5 +27,30 @@
         class="nested-canvas-content"
     >
 
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="{{'exampleModal' + id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Nested Flow Name</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Name: </label>
+                    <input type="email" [(ngModel)]="name" class="form-control" id="exampleFormControlInput1"
+                        placeholder="Enter name">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" (click)="onEdit()" data-bs-dismiss="modal">Save
+                    changes</button>
+            </div>
+        </div>
     </div>
 </div>
