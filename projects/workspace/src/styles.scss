@@ -59,3 +59,19 @@ body {
 {
   color: rgb(0, 184, 148);
 }
+
+.ngflowchart-canvas-content
+{
+  overflow: auto;
+}
+
+.group
+{
+ 
+  .ngflowchart-canvas-content
+  {
+    overflow: hidden !important;
+  }
+
+}
+
