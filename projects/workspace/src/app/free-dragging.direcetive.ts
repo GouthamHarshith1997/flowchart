@@ -52,6 +52,7 @@ export class FreeDraggingDirective implements AfterViewInit, OnDestroy {
   }
 
   initDrag(): void {
+    console.log("drag started");
     const dragStart$ = fromEvent<MouseEvent>(this.handleElement, "mousedown");
     const dragEnd$ = fromEvent<MouseEvent>(this.document, "mouseup");
     const drag$ = fromEvent<MouseEvent>(this.document, "mousemove").pipe(

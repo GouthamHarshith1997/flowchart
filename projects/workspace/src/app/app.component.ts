@@ -20,7 +20,7 @@ export class AppComponent {
   callbacks: NgFlowchart.Callbacks = {};
   options: NgFlowchart.Options = {
     stepGap: 40,
-    rootPosition: 'CENTER',
+    rootPosition: 'TOP_CENTER',
     zoom: {
       mode: 'WHEEL',
       rescaleOnResize: true,
@@ -161,49 +161,48 @@ export class AppComponent {
 
   showUpload() {
     let demo = {
-      root: {
-        id: 's1624206175876',
-        type: 'nested-flow',
-        data: {
-          name: 'Nested Flow',
-          nested: {
-            root: {
-              id: 's1624206177187',
-              type: 'log',
-              data: {
-                name: 'Log',
-                icon: { name: 'log-icon', color: 'blue' },
-                config: { message: null, severity: null },
-              },
-              children: [
-                {
-                  id: 's1624206178618',
-                  type: 'log',
-                  data: {
-                    name: 'Log',
-                    icon: { name: 'log-icon', color: 'blue' },
-                    config: { message: null, severity: null },
-                  },
-                  children: [],
-                }
-              ],
-            },
+      "root": {
+          "id": "s1666172142097",
+          "type": "group-flow",
+          "data": {
+              "name": "Group",
+              "groupCount": 0,
+              "class": " fa-solid fa-sitemap color-pink",
+              "nested": {
+                  "root": {
+                      "id": "s1666172263473",
+                      "type": "form-step",
+                      "data": {
+                          "name": "OPEN",
+                          "class": " fa-solid fa-up-right-from-square color-blue"
+                      },
+                      "children": [
+                          {
+                              "id": "s1666172264758",
+                              "type": "form-step",
+                              "data": {
+                                  "name": "ENTER",
+                                  "class": " fa-solid fa-code color-orange"
+                              },
+                              "children": [
+                                  {
+                                      "id": "s1666172265885",
+                                      "type": "form-step",
+                                      "data": {
+                                          "name": "REFRESH",
+                                          "class": " fa-solid fa-arrows-rotate color-blue"
+                                      },
+                                      "children": []
+                                  }
+                              ]
+                          }
+                      ]
+                  }
+              }
           },
-        },
-        children: [
-          {
-            id: 's1624206181654',
-            type: 'log',
-            data: {
-              name: 'Log',
-              icon: { name: 'log-icon', color: 'blue' },
-              config: { message: null, severity: null },
-            },
-            children: [],
-          },
-        ],
-      },
-    };
+          "children": []
+      }
+  }
 
     this.canvas.getFlow().upload(JSON.stringify(demo));
   }

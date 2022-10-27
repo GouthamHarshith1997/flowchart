@@ -1,6 +1,12 @@
 <main >
-  <div id="canvas" ngFlowchartCanvas  [ngFlowchartOptions]="options" [ngFlowchartCallbacks]="callbacks"
-    [disabled]="disabled"></div>
+  <div id="canvas" ngFlowchartCanvas [ngFlowchartOptions]="options" [ngFlowchartCallbacks]="callbacks"
+    [disabled]="disabled">
+
+    <!-- <div class="outerContent" appFreeDragging> 
+       
+    </div> -->
+  
+  </div>
   <div id="palette">
     <div class="palette-heading">
       <h4>Pallete</h4><span style="flex-grow: 1;"></span>
@@ -50,6 +56,7 @@
     <section class="position-fixed bottom-0">
       <button (click)="showFlowData()" class="btn btn-primary mx-1">Show JSON</button>
       <button (click)="clearData()" class="btn btn-primary mx-1">Clear Flow</button>
+      <button (click)="showUpload()" class="btn btn-primary mx-1 mt-4">Upload</button>
       <button (click)="rerenderFlowchart()" class="btn btn-primary mx-1 mt-4">Reset</button>
     </section>
     <!-- <ng-template #normalStep let-data>

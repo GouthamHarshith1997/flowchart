@@ -129,7 +129,7 @@ export class NgFlowchartCanvasService {
 
   public async onDrop(drag: DragEvent) {
     this.renderer.clearAllSnapIndicators(this.flow.steps);
-
+    console.log(this.flow.hasRoot(), drag);
     if (this.flow.hasRoot() && !this.currentDropTarget) {
       this.dropError(this.noParentError);
       return;

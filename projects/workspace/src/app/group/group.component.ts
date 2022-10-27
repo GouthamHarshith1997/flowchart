@@ -41,7 +41,7 @@ export class GroupComponent
 
   options: NgFlowchart.Options = {
     stepGap: 40,
-    rootPosition: 'CENTER',
+    rootPosition: 'TOP_CENTER',
     zoom: {
       mode: 'DISABLED',
     },
@@ -100,6 +100,7 @@ export class GroupComponent
   }
 
   canDrop(dropEvent: NgFlowchart.DropTarget): boolean {
+    console.log(dropEvent)
     let grountCount = this.dropDataService.getGroupCount();
     if (dropEvent == null) {
       let check = true;

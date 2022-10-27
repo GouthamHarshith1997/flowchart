@@ -50,7 +50,8 @@ export class CanvasRendererService {
 
     private renderChildTree(rootNode: NgFlowchartStepComponent, rootRect: Partial<DOMRect>, canvasRect: DOMRect) {
         //the rootNode passed in is already rendered. just need to render its children /subtree
-
+        console.log("height", canvasRect);
+        // canvasRect.bottom += 500;
         if (!rootNode.hasChildren()) {
             return;
         }
@@ -59,8 +60,8 @@ export class CanvasRendererService {
         const childYTop = (rootRect.bottom - canvasRect.top * this.scale) + this.getStepGap();
         //right of the child is relative lrft of the bottom.
         const childXleft = (rootRect.right-canvasRect.left*this.scale)+this.getStepGap();
-        const rootWidth = rootRect.width / this.scale
-        const rootHeight = rootRect.height/this.scale;
+        const rootWidth = rootRect.width / this.scale;
+        const rootHeight = rootRect.height/ this.scale;
         const rootXCenter = (rootRect.left - canvasRect.left) + (rootWidth / 2);
 
         const rootYcenter = (rootRect.top-canvasRect.top) + (rootHeight/2);
@@ -101,7 +102,7 @@ export class CanvasRendererService {
             // child.zsetPosition([childXleft,(rootRect.top-canvasRect.top)]);
 
           
-                child.zsetPosition([childXleft,childTop]);   
+                child.zsetPosition([childXleft ,childTop]);   
            
 
             const currentChildRect = child.getCurrentRect(canvasRect);
@@ -426,15 +427,40 @@ export class CanvasRendererService {
     }
 
     private getCanvasTopCenterPosition(htmlRootElement: HTMLElement) {
+        let classNames =  htmlRootElement.classList
+        let  isTypeGroup : boolean = false;
+
+        classNames.forEach((name)=>
+        {
+            if( name === 'group')
+            {
+                isTypeGroup = true;
+            }
+        })
         const canvasRect = this.getCanvasContentElement().getBoundingClientRect();
+        setTimeout(()=>
+        {
+            console.log(canvasRect, htmlRootElement);
+        }, 5000)
         const rootElementHeight = htmlRootElement.getBoundingClientRect().height
         const yCoord = rootElementHeight / 2 + this.options.options.stepGap
         const scaleYOffset = (1 - this.scale) * 100
+
+        if(isTypeGroup)
+        {
+            return [
+                canvasRect.width / (this.scale * 2),
+                yCoord + scaleYOffset
+            ]
+        }
+        else
+        {
+            return [
+                canvasRect.width / (this.scale * 8),
+                yCoord + scaleYOffset
+            ]
+        }
             
-        return [
-            canvasRect.width / (this.scale * 2),
-            yCoord + scaleYOffset
-        ]
     }
 
     private getCanvasCenterPosition() {
@@ -486,6 +512,7 @@ export class CanvasRendererService {
         canvasContent.style.minWidth = minDimAdjust
         canvasContent.style.transformOrigin = 'top left'
         canvasContent.classList.add('scaling')
+
 
         this.scale = scaleValue
         this.render(flow, true)
