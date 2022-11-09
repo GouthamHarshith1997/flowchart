@@ -22,6 +22,7 @@ export class StepManagerService {
   }
 
   public createFromRegistry(id: string, type: string, data: any, canvas: NgFlowchartCanvasService): ComponentRef<NgFlowchartStepComponent> {
+    console.log("goutham,  createFromRegistry ")
     let templateComp = this.registry.getStepImpl(type);
     let compRef: ComponentRef<NgFlowchartStepComponent>;
     if (templateComp instanceof TemplateRef || templateComp instanceof Type) {
@@ -40,6 +41,7 @@ export class StepManagerService {
   }
 
   public create(pendingStep: NgFlowchart.PendingStep, canvas: NgFlowchartCanvasService): ComponentRef<NgFlowchartStepComponent> {
+    console.log("goutham, create ")
     let componentRef: ComponentRef<NgFlowchartStepComponent>;
 
     if (pendingStep.template instanceof TemplateRef) {

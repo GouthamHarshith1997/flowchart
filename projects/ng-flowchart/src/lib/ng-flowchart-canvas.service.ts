@@ -18,14 +18,17 @@ export class CanvasFlow {
   private _steps: NgFlowchartStepComponent[] = [];
 
   hasRoot() {
+    console.log("goutham, hasRoot ", !!this.rootStep , this.rootStep, this._steps)
     return !!this.rootStep;
   }
 
   addStep(step: NgFlowchartStepComponent) {
+    console.log("goutham, addStep ");
     this._steps.push(step);
   }
 
   removeStep(step: NgFlowchartStepComponent) {
+    console.log("goutham, removeStep ");
     let index = this._steps.findIndex((ele) => ele.id == step.id);
     if (index >= 0) {
       this._steps.splice(index, 1);
@@ -129,7 +132,7 @@ export class NgFlowchartCanvasService {
 
   public async onDrop(drag: DragEvent) {
     this.renderer.clearAllSnapIndicators(this.flow.steps);
-    console.log(this.flow.hasRoot(), drag);
+    console.log("goutham, onDrop ",  this.flow.hasRoot() , this.currentDropTarget);
     if (this.flow.hasRoot() && !this.currentDropTarget) {
       this.dropError(this.noParentError);
       return;
@@ -145,6 +148,7 @@ export class NgFlowchartCanvasService {
     if (componentRef.instance.canDrop(dropTarget, error)) {
       if (!this.flow.hasRoot()) {
         this.renderer.renderRoot(componentRef, drag);
+        console.log("goutham, onDrop setRoot");
         this.setRoot(componentRef.instance);
       } else {
         // if root is replaced by another step, rerender root to proper position
@@ -239,7 +243,7 @@ export class NgFlowchartCanvasService {
     pending: NgFlowchart.PendingStep
   ): Promise<ComponentRef<NgFlowchartStepComponent>> {
     let componentRef: ComponentRef<NgFlowchartStepComponent>;
-
+    console.log("goutham, createStep")
     componentRef = this.stepmanager.create(pending, this);
 
     return new Promise((resolve) => {
@@ -288,6 +292,7 @@ export class NgFlowchartCanvasService {
     this.addToCanvas(componentRef);
     const response = this.addStepToFlow(componentRef.instance, dropTarget);
     this.renderer.render(this.flow, response.prettyRender);
+    this.drag.resetFlowChart.next(true);
   }
 
   addToCanvas(componentRef: ComponentRef<NgFlowchartStepComponent>) {
@@ -332,6 +337,7 @@ export class NgFlowchartCanvasService {
   }
 
   private setRoot(step: NgFlowchartStepComponent, force: boolean = true) {
+    console.log("goutham, setRoot");
     if (this.flow.hasRoot()) {
       if (!force) {
         console.warn('Already have a root and force is false');

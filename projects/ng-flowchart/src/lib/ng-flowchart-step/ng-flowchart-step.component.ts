@@ -161,6 +161,14 @@ export class NgFlowchartStepComponent<T = any> {
 
     this.canvas.flow.addStep(componentRef.instance);
 
+    // this.canvas.setScale(1);
+    // let json = this.canvas.getFlow().toJSON(4);
+
+    // this.canvas.getFlow().upload(json);
+
+    console.log("a child added")
+    this.canvas.options.callbacks.afterAddingChild();
+
     this.canvas.reRender();
 
     return componentRef.instance;

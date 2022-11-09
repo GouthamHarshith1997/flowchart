@@ -1,22 +1,28 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { Component, TemplateRef, ViewChild, HostBinding, ElementRef, OnInit} from '@angular/core';
 import { NgFlowchart } from 'projects/ng-flowchart/src/lib/model/flow.model';
 import { NgFlowchartStepRegistry } from 'projects/ng-flowchart/src/lib/ng-flowchart-step-registry.service';
-import { NgFlowchartCanvasDirective } from 'projects/ng-flowchart/src';
+import { NgFlowchartCanvasDirective, OptionsService } from 'projects/ng-flowchart/src';
 import { CustomStepComponent } from './custom-step/custom-step.component';
 import { RouteStepComponent } from './custom-step/route-step/route-step.component';
 import { FormStepComponent, MyForm } from './form-step/form-step.component';
 import { NestedFlowComponent } from './nested-flow/nested-flow.component';
 import { GroupComponent } from './group/group.component';
 import { DropDataService } from 'projects/ng-flowchart/src/lib/services/dropdata.service';
+import { FreeDraggingDirective } from './free-dragging.direcetive';
+import { CanvasRendererService } from 'projects/ng-flowchart/src/lib/services/canvas-renderer.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  providers : [CanvasRendererService,
+    OptionsService]
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
   title = 'workspace';
+  currentScale : any;
 
+  @ViewChild('hello', { static: true }) divHello: ElementRef;
   callbacks: NgFlowchart.Callbacks = {};
   options: NgFlowchart.Options = {
     stepGap: 40,
@@ -121,16 +127,36 @@ export class AppComponent {
 
   constructor(
     private stepRegistry: NgFlowchartStepRegistry,
-    private dropService: DropDataService
+    private dropService: DropDataService,
+    private element: ElementRef,
+    private canvasRenderer : CanvasRendererService
   ) {
     this.callbacks.onDropError = this.onDropError;
     this.callbacks.onMoveError = this.onMoveError;
     this.callbacks.afterDeleteStep = this.afterDeleteStep;
     this.callbacks.beforeDeleteStep = this.beforeDeleteStep;
+    this.callbacks.afterAddingChild = this.afterAddingChild;
 
     //new code
     let groupData = { isGroupExist: false, groupCount: 0 };
     localStorage.setItem('groupData', JSON.stringify(groupData));
+  }
+
+  ngOnInit() {
+    this.dropService.currentScale.subscribe((res)=>
+    {
+      console.log("value updated : ", res);
+      this.currentScale = res;
+    })
+
+    this.dropService.resetFlowChart.subscribe((res)=>
+    {
+      if( parseFloat(this.currentScale.toFixed(1)) < 1)
+      {
+           console.log("flowchart reseted ", this.rerenderFlowchart())
+      }
+     
+    })
   }
 
   ngAfterViewInit() {
@@ -157,6 +183,11 @@ export class AppComponent {
 
   afterDeleteStep(step) {
     console.log(JSON.stringify(step.children));
+  }
+
+  afterAddingChild()
+  {
+    console.log("a child added");
   }
 
   showUpload() {
@@ -252,7 +283,9 @@ export class AppComponent {
 
   {
 
-    this.canvas.setScale(1)
+    console.log(this.currentScale,  parseFloat(this.currentScale.toFixed(1)));
+    // this.canvas.setScale(parseFloat(this.currentScale.toFixed(1)));
+    this.canvas.setScale(1);
 
     let json = this.canvas.getFlow().toJSON(4);
 

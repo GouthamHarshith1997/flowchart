@@ -17,6 +17,7 @@ import { ToastrService } from 'ngx-toastr';
 import { OptionsService } from './services/options.service';
 import { StepManagerService } from './services/step-manager.service';
 import { DropDataService as DragService } from './services/dropdata.service';
+import { FreeDraggingDirective } from 'projects/workspace/src/app/free-dragging.direcetive';
 
 @Directive({
   selector: '[ngFlowchartCanvas]',
@@ -33,6 +34,8 @@ export class NgFlowchartCanvasDirective
   offsetX: string;
   offsetY: string;
   isEventDragging: boolean = false;
+
+  @HostBinding('attr.appFreeDragging') appFreeDragging;
 
   @HostListener('drop', ['$event'])
   protected onDrop(event: DragEvent) {
@@ -202,6 +205,9 @@ export class NgFlowchartCanvasDirective
     canvasEle.appendChild(canvasContent);
 
     
+    // Adding drag feature on canvas
+    // this.appFreeDragging   = new FreeDraggingDirective(canvasContent, document);
+    // this.appFreeDragging.ngAfterViewInit();
     
     return canvasContent;
   }
@@ -246,7 +252,7 @@ export class NgFlowchartCanvasDirective
     if (this.canvas.flow.hasRoot()) {
       event.preventDefault();
       // scale down / zoom out
-      console.log(this._scaleVal);
+
       let zoom = 1;
       const ZOOM_SPEED = 0.1;
       // if(event.deltaY > 0) {
@@ -256,6 +262,7 @@ export class NgFlowchartCanvasDirective
       //  if(event.deltaY < 0) {
       //     this._scaleVal += this._scaleVal * .1
       // }
+      this.drag.setCurrentScale(this._scaleVal);
       const minDimAdjust = `${(1 / this._scaleVal) * 100}%`;
       if (event.deltaY > 0) {
         this.canvasContent.style.transform = `scale(${(this._scaleVal +=
@@ -265,8 +272,9 @@ export class NgFlowchartCanvasDirective
           ZOOM_SPEED)})`;
       }
       this.canvasContent.style.transform = `scale(${this._scaleVal})`;
-      this.canvasContent.style.minHeight = minDimAdjust;
-      this.canvasContent.style.minWidth = minDimAdjust;
+      // this.canvasContent.style.minHeight = minDimAdjust;
+      // this.canvasContent.style.minWidth = minDimAdjust;
+      console.log(this._scaleVal);
       this.canvasContent.style.transformOrigin = 'center center';
       this.canvasContent.classList.add('scaling');
 

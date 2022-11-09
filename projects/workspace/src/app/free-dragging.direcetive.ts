@@ -9,11 +9,11 @@ import {
   OnDestroy,
 } from "@angular/core";
 import { fromEvent, Subscription } from "rxjs";
-import { takeUntil } from "rxjs/operators";
+import { max,takeUntil } from "rxjs/operators";
 // import { FreeDraggingHandleDirective } from "./free-dragging-handle.directive";
 
 @Directive({
-  selector: "[appFreeDragging]",
+  selector: ".appFreeDragging",
 })
 export class FreeDraggingDirective implements AfterViewInit, OnDestroy {
   private element: HTMLElement;
@@ -25,26 +25,26 @@ export class FreeDraggingDirective implements AfterViewInit, OnDestroy {
 
   handleElement: HTMLElement;
 
-  private readonly DEFAULT_DRAGGING_BOUNDARY_QUERY = "body";
+  private readonly DEFAULT_DRAGGING_BOUNDARY_QUERY = ".ngflowchart-canvas";
   @Input() boundaryQuery = this.DEFAULT_DRAGGING_BOUNDARY_QUERY;
   draggingBoundaryElement: HTMLElement | HTMLBodyElement;
   handle: any;
 
   constructor(
-    private elementRef: ElementRef,
+    private elementRef: HTMLElement,
     @Inject(DOCUMENT) private document: any
   ) {}
 
   ngAfterViewInit(): void {
     this.draggingBoundaryElement = (this.document as Document).querySelector(
-      this.boundaryQuery
+      'body'
     );
     if (!this.draggingBoundaryElement) {
       throw new Error(
         "Couldn't find any element with query: " + this.boundaryQuery
       );
     } else {
-      this.element = this.elementRef.nativeElement as HTMLElement;
+      this.element = this.elementRef as HTMLElement;
       this.handleElement =
         this.handle?.elementRef?.nativeElement || this.element;
       this.initDrag();
@@ -89,8 +89,10 @@ export class FreeDraggingDirective implements AfterViewInit, OnDestroy {
         const x = event.clientX - initialX;
         const y = event.clientY - initialY;
 
-        currentX = Math.max(minBoundX, Math.min(x, maxBoundX));
-        currentY = Math.max(minBoundY, Math.min(y, maxBoundY));
+        // currentX = Math.max(minBoundX, Math.min(x, maxBoundX));
+        // currentY = Math.max(minBoundY, Math.min(y, maxBoundY));
+        currentX =x;
+        currentY = y;
 
         this.element.style.transform =
           "translate3d(" + currentX + "px, " + currentY + "px, 0)";

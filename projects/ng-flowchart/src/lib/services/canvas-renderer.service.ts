@@ -3,6 +3,7 @@ import { NgFlowchart } from '../model/flow.model';
 import { CONSTANTS } from '../model/flowchart.constants';
 import { CanvasFlow } from '../ng-flowchart-canvas.service';
 import { NgFlowchartStepComponent } from '../ng-flowchart-step/ng-flowchart-step.component';
+import { DropDataService } from './dropdata.service';
 import { OptionsService } from './options.service';
 
 export type DropProximity = {
@@ -15,17 +16,22 @@ export type DropProximity = {
 export class CanvasRendererService {
     private viewContainer: ViewContainerRef;
 
-    private scale: number = 1;
+    public scale: number = 1;
     private scaleDebounceTimer = null
 
     constructor(
-        private options: OptionsService
+        private options: OptionsService,
+        private dropService : DropDataService
     ) {
 
     }
 
     public init(viewContainer: ViewContainerRef) {
         this.viewContainer = viewContainer;
+        this.dropService.currentScale.subscribe((res)=>
+        {
+            this.scale =  res;
+        })
     }
 
     public renderRoot(step: ComponentRef<NgFlowchartStepComponent>, dragEvent?: DragEvent) {
@@ -508,13 +514,14 @@ export class CanvasRendererService {
         const canvasContent = this.getCanvasContentElement()
 
         canvasContent.style.transform = `scale(${scaleValue})`;
-        canvasContent.style.minHeight = minDimAdjust
-        canvasContent.style.minWidth = minDimAdjust
-        canvasContent.style.transformOrigin = 'top left'
+        // canvasContent.style.minHeight = minDimAdjust
+        // canvasContent.style.minWidth = minDimAdjust
+        canvasContent.style.transformOrigin = 'center center'
         canvasContent.classList.add('scaling')
 
 
-        this.scale = scaleValue
+        this.scale = scaleValue;
+        this.dropService.setCurrentScale(scaleValue);
         this.render(flow, true)
 
         if(this.options.callbacks?.afterScale) {

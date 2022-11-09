@@ -198,5 +198,10 @@ export namespace NgFlowchart {
      * Called after the canvas has been scaled
      */
     afterScale?: (newScale: number) => void;
+
+      /**
+     * Called after the child has been added
+     */
+    afterAddingChild?: () => void;
   };
 }

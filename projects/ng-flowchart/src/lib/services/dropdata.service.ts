@@ -9,6 +9,8 @@ export class DropDataService {
   dragStep: NgFlowchart.PendingStep | NgFlowchart.MoveStep;
   groupCount : number = 0;
   activeStep;
+  currentScale = new BehaviorSubject(1);
+  resetFlowChart = new BehaviorSubject(null);
 
   public GroupCheck = new Subject<any>();
   isActiveStepDropping : boolean = false;
@@ -65,6 +67,12 @@ export class DropDataService {
  public getActiveStep()
  {
   return this.activeStep;
+ }
+
+ public setCurrentScale(scale)
+ {
+    console.log("value updated : ",scale)
+    this.currentScale.next(scale);
  }
 
  
