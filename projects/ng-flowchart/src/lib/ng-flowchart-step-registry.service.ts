@@ -1,4 +1,5 @@
 import { Injectable, TemplateRef, Type } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { NgFlowchartStepComponent } from './ng-flowchart-step/ng-flowchart-step.component';
 
 @Injectable({
@@ -7,6 +8,7 @@ import { NgFlowchartStepComponent } from './ng-flowchart-step/ng-flowchart-step.
 export class NgFlowchartStepRegistry {
     
     private registry = new Map<string, Type<NgFlowchartStepComponent> | TemplateRef<any>>();
+    public shrinkView : BehaviorSubject<boolean> = new BehaviorSubject(true);
     
     constructor() {
 

@@ -83,3 +83,8 @@ div#canvas[disabled="true"] ::ng-deep.ngflowchart-step-wrapper {
     opacity: .7;
 }
 
+.scroll
+{
+    max-height: 325px;
+    overflow: auto;
+}

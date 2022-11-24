@@ -11,7 +11,7 @@
     <div class="palette-heading">
       <h4>Pallete</h4><span style="flex-grow: 1;"></span>
     </div>
-    <section>
+    <section class="scroll">
       <div class="plugin-op" *ngFor="let op of customOps" [ngFlowchartStep]="op.step">
        <i [class]="'mx-2' + op.step.data.class" ></i>
         <span>{{ op.paletteName }}</span>
@@ -58,6 +58,7 @@
       <button (click)="clearData()" class="btn btn-primary mx-1">Clear Flow</button>
       <button (click)="showUpload()" class="btn btn-primary mx-1 mt-4">Upload</button>
       <button (click)="rerenderFlowchart()" class="btn btn-primary mx-1 mt-4">Reset</button>
+      <button (click)="changeView()" class="btn btn-primary mx-1 mt-4">change view</button>
     </section>
     <!-- <ng-template #normalStep let-data>
       <div

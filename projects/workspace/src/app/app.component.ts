@@ -21,6 +21,7 @@ import { CanvasRendererService } from 'projects/ng-flowchart/src/lib/services/ca
 export class AppComponent implements OnInit{
   title = 'workspace';
   currentScale : any;
+  shrinkView : boolean = false;
 
   @ViewChild('hello', { static: true }) divHello: ElementRef;
   callbacks: NgFlowchart.Callbacks = {};
@@ -96,6 +97,39 @@ export class AppComponent implements OnInit{
       },
     },
     {
+      paletteName: 'IF',
+      step: {
+        template: FormStepComponent,
+        type: 'form-step',
+        data: {
+          name: 'IF',
+          class : ' fa-solid fa-code color-orange'
+        },
+      },
+    },
+    {
+      paletteName: 'ELSEIF',
+      step: {
+        template: FormStepComponent,
+        type: 'form-step',
+        data: {
+          name: 'ELSEIF',
+          class : ' fa-solid fa-code color-orange'
+        },
+      },
+    },
+    {
+      paletteName: 'ELSE',
+      step: {
+        template: FormStepComponent,
+        type: 'form-step',
+        data: {
+          name: 'ELSE',
+          class : ' fa-solid fa-code color-orange'
+        },
+      },
+    },
+    {
       paletteName: 'Loop',
       step: {
         template: NestedFlowComponent,
@@ -118,6 +152,7 @@ export class AppComponent implements OnInit{
         },
       },
     },
+    
   ];
 
   @ViewChild(NgFlowchartCanvasDirective)
@@ -155,7 +190,10 @@ export class AppComponent implements OnInit{
       {
            console.log("flowchart reseted ", this.rerenderFlowchart())
       }
-     
+    })
+    this.stepRegistry.shrinkView.subscribe((res)=>
+    {
+      this.shrinkView =  res;
     })
   }
 
@@ -280,16 +318,17 @@ export class AppComponent implements OnInit{
   }
 
   rerenderFlowchart()
-
   {
-
     console.log(this.currentScale,  parseFloat(this.currentScale.toFixed(1)));
     // this.canvas.setScale(parseFloat(this.currentScale.toFixed(1)));
     this.canvas.setScale(1);
-
     let json = this.canvas.getFlow().toJSON(4);
-
     this.canvas.getFlow().upload(json);
+  }
 
+  changeView()
+  {
+    this.stepRegistry.shrinkView.next(!this.shrinkView);
+    this.rerenderFlowchart();
   }
 }
